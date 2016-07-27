@@ -23,7 +23,7 @@ const Mention = (props) => {
       className={theme.mention}
       spellCheck={false}
     >
-      {props.mentionPrefix}{mention.get('handle')}
+      {props.mentionPrefix}{props.children}
     </span>
   );
 };
