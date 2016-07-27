@@ -13,7 +13,7 @@
 }
 
 .mentionSuggestionsEntryText {
-  display: inline-block;
+  display: block;
   margin-left: 8px;
   white-space: nowrap;
   overflow: hidden;
@@ -21,6 +21,10 @@
   max-width: 368px;
   font-size: 0.9em;
   margin-bottom: 0.2em;
+}
+
+.mentionSuggestionsEntryText {
+  display: inline-block;
 }
 
 .mentionSuggestionsEntryAvatar {
