@@ -1,4 +1,5 @@
 .mentionSuggestionsEntry {
+  flex-shrink: 0;
   padding: 7px 10px 3px 10px;
   transition: background-color 0.4s cubic-bezier(.27,1.27,.48,.56);
 }
@@ -13,23 +14,23 @@
 }
 
 .mentionSuggestionsEntryTextWrapper {
-  display: block;
-  margin-left: 8px;
+  display: inline-block;
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 368px;
   font-size: 0.9em;
-  margin-bottom: 0.2em;
+  width: calc(100% - 43px);
 }
 
 .mentionSuggestionsEntryText {
-  display: inline-block;
+  display: block;
 }
 
 .mentionSuggestionsEntryAvatar {
   display: inline-block;
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 8px;
 }

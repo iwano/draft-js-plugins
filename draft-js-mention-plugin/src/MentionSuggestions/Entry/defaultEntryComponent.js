@@ -14,7 +14,7 @@ const defaultEntryComponent = (props) => {
       <Avatar mention={mention} theme={theme} />
       <div className={theme.mentionSuggestionsEntryTextWrapper}>
         <span className={theme.mentionSuggestionsEntryText}>{mention.get('fullName')}</span>
-        <span className={theme.mentionSuggestionsEntryText}>{mention.get('name')}</span>
+        <small className={theme.mentionSuggestionsEntryText}>{mention.get('name')}</small>
       </div>
     </div>
   );

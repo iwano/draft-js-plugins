@@ -20,6 +20,7 @@ const createMentionPlugin = (config = {}) => {
     // CSS classes for an entry in the suggestions component
     mentionSuggestionsEntry: mentionSuggestionsEntryStyles.mentionSuggestionsEntry,
     mentionSuggestionsEntryFocused: mentionSuggestionsEntryStyles.mentionSuggestionsEntryFocused,
+    mentionSuggestionsEntryTextWrapper: mentionSuggestionsEntryStyles.mentionSuggestionsEntryTextWrapper,
     mentionSuggestionsEntryText: mentionSuggestionsEntryStyles.mentionSuggestionsEntryText,
     mentionSuggestionsEntryAvatar: mentionSuggestionsEntryStyles.mentionSuggestionsEntryAvatar,
   };
