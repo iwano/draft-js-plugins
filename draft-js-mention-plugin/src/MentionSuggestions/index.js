@@ -175,7 +175,15 @@ export default class MentionSuggestions extends Component {
   onDownArrow = (keyboardEvent) => {
     keyboardEvent.preventDefault();
     const newIndex = this.state.focusedOptionIndex + 1;
-    this.onMentionFocus(newIndex >= this.props.suggestions.size ? 0 : newIndex);
+    const suggestionsCount = this.props.suggestions.size;
+    const newItemScrollTop = 55 * (newIndex + 1);
+    if (newIndex >= suggestionsCount) {
+      this.refs.popover.scrollTop = 0;
+    } else if ((this.refs.popover.scrollTop + 300) < newItemScrollTop) {
+      this.refs.popover.scrollTop = newItemScrollTop - 300;
+    }
+
+    this.onMentionFocus(newIndex >= suggestionsCount ? 0 : newIndex);
   };
 
   onTab = (keyboardEvent) => {
@@ -187,6 +195,10 @@ export default class MentionSuggestions extends Component {
     keyboardEvent.preventDefault();
     if (this.props.suggestions.size > 0) {
       const newIndex = this.state.focusedOptionIndex - 1;
+      const newItemScrollTop = 55 * (newIndex);
+      if (this.refs.popover.scrollTop > newItemScrollTop) {
+        this.refs.popover.scrollTop = newItemScrollTop;
+      }
       this.onMentionFocus(Math.max(newIndex, 0));
     }
   };
@@ -220,7 +232,6 @@ export default class MentionSuggestions extends Component {
     const descendant = `mention-option-${this.key}-${index}`;
     this.props.ariaProps.ariaActiveDescendantID = descendant;
     this.state.focusedOptionIndex = index;
-
     // to force a re-render of the outer component to change the aria props
     this.props.store.setEditorState(this.props.store.getEditorState());
   };
