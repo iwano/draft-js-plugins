@@ -181,9 +181,9 @@ export default class MentionSuggestions extends Component {
     const suggestionsCount = this.props.suggestions.size;
     const newItemScrollTop = 55 * (newIndex + 1);
     if (newIndex >= suggestionsCount) {
-      this.refs.popover.scrollTop = 0;
-    } else if ((this.refs.popover.scrollTop + 300) < newItemScrollTop) {
-      this.refs.popover.scrollTop = newItemScrollTop - 300;
+      this.popover.scrollTop = 0;
+    } else if ((this.popover.scrollTop + 300) < newItemScrollTop) {
+      this.popover.scrollTop = newItemScrollTop - 300;
     }
 
     this.onMentionFocus(newIndex >= suggestionsCount ? 0 : newIndex);
@@ -199,8 +199,8 @@ export default class MentionSuggestions extends Component {
     if (this.props.suggestions.size > 0) {
       const newIndex = this.state.focusedOptionIndex - 1;
       const newItemScrollTop = 55 * (newIndex);
-      if (this.refs.popover.scrollTop > newItemScrollTop) {
-        this.refs.popover.scrollTop = newItemScrollTop;
+      if (this.popover.scrollTop > newItemScrollTop) {
+        this.popover.scrollTop = newItemScrollTop;
       }
       this.onMentionFocus(Math.max(newIndex, 0));
     }
