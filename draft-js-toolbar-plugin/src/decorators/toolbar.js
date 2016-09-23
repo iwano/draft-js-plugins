@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 // Get a component's display name
-const getDisplayName = WrappedComponent => {
+const getDisplayName = (WrappedComponent) => {
   const component = WrappedComponent.WrappedComponent || WrappedComponent;
   return component.displayName || component.name || 'Component';
 };
@@ -10,7 +10,7 @@ const getDisplayName = WrappedComponent => {
 let number = 0;
 
 // HoverToolbar decorator will render a toolbar on hovering the WrappedComponent
-export default ({ theme, customRender }) => WrappedComponent => class FocusedToolbarDecorator extends Component {
+export default ({ theme, customRender }) => (WrappedComponent) => class FocusedToolbarDecorator extends Component {
   // Statics
   static displayName = `FocusedToolbar(${getDisplayName(WrappedComponent)})`;
   static WrappedComponent = WrappedComponent.WrappedComponent || WrappedComponent;
@@ -18,13 +18,15 @@ export default ({ theme, customRender }) => WrappedComponent => class FocusedToo
   // Bind listeners on mount
   componentDidMount() {
     // Set this.number to a unique value
-    this.number = number++;
+    number += 1;
+    this.number = number;
 
     // Bind listeners
     this.componentDidUpdate();
   }
 
   componentDidUpdate() {
+    // eslint-disable-next-line react/no-find-dom-node
     this.DOMNode = ReactDOM.findDOMNode(this);
     if (!customRender) {
       this.renderToolbar(
@@ -62,7 +64,7 @@ export default ({ theme, customRender }) => WrappedComponent => class FocusedToo
     }
   }
 
-  addActions = actions => {
+  addActions = (actions) => {
     this.componentActions = actions;
   }
 

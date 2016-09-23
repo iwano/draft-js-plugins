@@ -1,12 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-
+import { genKey } from 'draft-js';
+import { List } from 'immutable';
 import Entry from './Entry';
 import addMention from '../modifiers/addMention';
 import decodeOffsetKey from '../utils/decodeOffsetKey';
-import { genKey } from 'draft-js';
 import getSearchText from '../utils/getSearchText';
 import defaultEntryComponent from './Entry/defaultEntryComponent';
-import { List } from 'immutable';
 
 export default class MentionSuggestions extends Component {
 
@@ -27,10 +26,6 @@ export default class MentionSuggestions extends Component {
     },
   };
 
-  static defaultProps = {
-    entryComponent: defaultEntryComponent,
-  };
-
   state = {
     isActive: false,
     focusedOptionIndex: 0,
@@ -48,7 +43,7 @@ export default class MentionSuggestions extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    if (this.refs.popover) {
+    if (this.popover) {
       // In case the list shrinks there should be still an option focused.
       // Note: this might run multiple times and deduct 1 until the condition is
       // not fullfilled anymore.
@@ -59,6 +54,14 @@ export default class MentionSuggestions extends Component {
         });
       }
 
+      // Note: this is a simple protection for the error when componentDidUpdate
+      // try to get new getPortalClientRect, but the key already was deleted by
+      // previous action. (right now, it only can happened when set the mention
+      // trigger to be multi-characters which not supported anyway!)
+      if (!this.props.store.getAllSearches().has(this.activeOffsetKey)) {
+        return;
+      }
+
       const decoratorRect = this.props.store.getPortalClientRect(this.activeOffsetKey);
       const newStyles = this.props.positionSuggestions({
         decoratorRect,
@@ -66,10 +69,10 @@ export default class MentionSuggestions extends Component {
         prevState,
         props: this.props,
         state: this.state,
-        popover: this.refs.popover,
+        popover: this.popover,
       });
       Object.keys(newStyles).forEach((key) => {
-        this.refs.popover.style[key] = newStyles[key];
+        this.popover.style[key] = newStyles[key];
       });
     }
   };
@@ -123,14 +126,14 @@ export default class MentionSuggestions extends Component {
     const selectionIsInsideWord = leaves
       .filter((leave) => leave !== undefined)
       .map(({ start, end }) => (
-        start === 0 && anchorOffset === 1 && anchorOffset <= end || // @ is the first character
-        anchorOffset > start + 1 && anchorOffset <= end // @ is in the text or at the end
+        (start === 0 && anchorOffset === 1 && anchorOffset <= end) || // @ is the first character
+        (anchorOffset > start + 1 && anchorOffset <= end) // @ is in the text or at the end
       ));
 
     if (selectionIsInsideWord.every((isInside) => isInside === false)) return removeList();
 
     this.activeOffsetKey = selectionIsInsideWord
-      .filter(value => value === true)
+      .filter((value) => value === true)
       .keySeq()
       .first();
 
@@ -207,7 +210,7 @@ export default class MentionSuggestions extends Component {
     keyboardEvent.preventDefault();
 
     const activeOffsetKey = this.lastSelectionIsInsideWord
-      .filter(value => value === true)
+      .filter((value) => value === true)
       .keySeq()
       .first();
     this.props.store.escapeSearch(activeOffsetKey);
@@ -218,6 +221,11 @@ export default class MentionSuggestions extends Component {
   };
 
   onMentionSelect = (mention) => {
+    // Note: This can happen in case a user typed @xxx (invalid mention) and
+    // then hit Enter. Then the mention will be undefined.
+    if (!mention) {
+      return;
+    }
     this.closeDropdown();
     const newEditorState = addMention(
       this.props.store.getEditorState(),
@@ -310,7 +318,7 @@ export default class MentionSuggestions extends Component {
         className={theme.mentionSuggestions}
         role="listbox"
         id={`mentions-list-${this.key}`}
-        ref="popover"
+        ref={(element) => { this.popover = element; }}
       >
         {
           this.props.suggestions.map((mention, index) => (
@@ -324,7 +332,7 @@ export default class MentionSuggestions extends Component {
               id={`mention-option-${this.key}-${index}`}
               theme={theme}
               searchValue={this.lastSearchValue}
-              entryComponent={entryComponent}
+              entryComponent={entryComponent || defaultEntryComponent}
             />
           )).toJS()
         }

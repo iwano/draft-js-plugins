@@ -1,6 +1,18 @@
+/* eslint-disable no-template-curly-in-string */
 import React, { Component } from 'react';
-import styles from './styles.css';
 
+// eslint-disable-next-line import/no-unresolved
+import gettingStarted from '!!../../../loaders/prism-loader?language=javascript!./gettingStarted';
+// eslint-disable-next-line import/no-unresolved
+import simpleExampleCode from '!!../../../loaders/prism-loader?language=javascript!./SimpleEmojiEditor';
+// eslint-disable-next-line import/no-unresolved
+import simpleEditorStylesCode from '!!../../../loaders/prism-loader?language=css!./SimpleEmojiEditor/editorStyles.css';
+// eslint-disable-next-line import/no-unresolved
+import webpackConfig from '!!../../../loaders/prism-loader?language=javascript!./webpackConfig';
+// eslint-disable-next-line import/no-unresolved
+import webpackImport from '!!../../../loaders/prism-loader?language=javascript!./webpackImport';
+
+import styles from './styles.css';
 import Container from '../../shared/Container';
 import Heading from '../../shared/Heading';
 import SocialBar from '../../shared/SocialBar';
@@ -9,17 +21,17 @@ import Separator from '../../shared/Separator';
 import Code from '../../shared/Code';
 import SimpleEmojiEditor from './SimpleEmojiEditor';
 import AlternateContainer from '../../shared/AlternateContainer';
-
-import gettingStarted from '!!../../../loaders/prism-loader?language=javascript!./gettingStarted'; // eslint-disable-line import/no-unresolved
-
-import simpleExampleCode from '!!../../../loaders/prism-loader?language=javascript!./SimpleEmojiEditor'; // eslint-disable-line import/no-unresolved
-import simpleEditorStylesCode from '!!../../../loaders/prism-loader?language=css!./SimpleEmojiEditor/editorStyles.css'; // eslint-disable-line import/no-unresolved
-import webpackConfig from '!!../../../loaders/prism-loader?language=javascript!./webpackConfig'; // eslint-disable-line import/no-unresolved
-import webpackImport from '!!../../../loaders/prism-loader?language=javascript!./webpackImport'; // eslint-disable-line import/no-unresolved
 import ExternalLink from '../../shared/Link';
 import InlineCode from '../../shared/InlineCode';
 
+const priorityListCode = `priorityList: {
+  ':see_no_evil:': ["1f648"],
+  ':raised_hands:': ["1f64c"],
+  ':100:': ["1f4af"],
+}`;
+
 export default class App extends Component {
+  // eslint-disable-next-line class-methods-use-this
   render() {
     return (
       <div>
@@ -125,6 +137,11 @@ export default class App extends Component {
           <div className={styles.param}>
             <span className={styles.paramName}>imagePath</span>
             <span>The Emojis are displayed using SVGs. The full path is constructed of multiple parts like this: {'`${imagePath}${unicode}.svg${cacheBustParam}`'}. The default imagePath is: '//cdn.jsdelivr.net/emojione/assets/svg/', but can be overwritten with this config.</span>
+          </div>
+          <div className={styles.param}>
+            <span className={styles.paramName}>priorityList</span>
+            <span>These entries will be show first in the EmojiSuggestions dropdown after typing `:`. Must be an object which mus contain Emoji entries used by EmojiOne e.g.</span>
+            <Code code={priorityListCode} />
           </div>
           <Heading level={3}>EmojiSuggestions</Heading>
           <div>

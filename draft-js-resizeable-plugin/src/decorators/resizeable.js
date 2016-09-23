@@ -4,18 +4,20 @@ import ReactDOM from 'react-dom';
 const resizeableRatioUtil = (ratio, padding) => ({
   ratioContainerStyle: {
     position: 'relative'
-  }, ratioContentStyle: {
+  },
+  ratioContentStyle: {
     position: 'absolute',
     top: padding ? `-${padding}px` : 0,
     left: padding ? `-${padding}px` : 0,
     bottom: 0,
     right: 0,
     padding: padding ? `${padding}px` : 0
-  }, createRatioPlaceholder: () => <div style={{ display: 'block', width: '100%', paddingTop: `${ratio * 100}%` }}></div>
+  },
+  createRatioPlaceholder: () => <div style={{ display: 'block', width: '100%', paddingTop: `${ratio * 100}%` }} />
 });
 
 // Get a component's display name
-const getDisplayName = WrappedComponent => {
+const getDisplayName = (WrappedComponent) => {
   const component = WrappedComponent.WrappedComponent || WrappedComponent;
   return component.displayName || component.name || 'Component';
 };
@@ -25,7 +27,7 @@ function round(x, steps) {
 }
 
 // Export
-export default options => WrappedComponent => class BlockResizeableDecorator extends Component {
+export default (options) => (WrappedComponent) => class BlockResizeableDecorator extends Component {
   // Statics
   static displayName = `BlockDraggable(${getDisplayName(WrappedComponent)})`;
   static WrappedComponent = WrappedComponent.WrappedComponent || WrappedComponent;
@@ -43,7 +45,7 @@ export default options => WrappedComponent => class BlockResizeableDecorator ext
     clicked: false,
   };
 
-  setEntityData = data => {
+  setEntityData = (data) => {
     this.props.blockProps.setEntityData(data);
   }
 
@@ -60,6 +62,7 @@ export default options => WrappedComponent => class BlockResizeableDecorator ext
   }
 
   componentDidUpdate() {
+    // eslint-disable-next-line react/no-find-dom-node
     this.DOMNode = ReactDOM.findDOMNode(this);
     const readOnly = this.props.blockProps.pluginEditor.getReadOnly();
 
@@ -98,13 +101,13 @@ export default options => WrappedComponent => class BlockResizeableDecorator ext
       isTop, isLeft, isRight, isBottom, canResize
     };
 
-    if (Object.keys(newHoverPosition).filter(key => hoverPosition[key] !== newHoverPosition[key]).length) {
+    if (Object.keys(newHoverPosition).filter((key) => hoverPosition[key] !== newHoverPosition[key]).length) {
       this.setState({ hoverPosition: newHoverPosition });
     }
   }
 
   // Handle mousedown for resizing
-  mouseDown = event => {
+  mouseDown = (event) => {
     // No mouse-hover-position data? Nothing to resize!
     if (!this.state.hoverPosition.canResize) {
       return undefined;
@@ -121,14 +124,14 @@ export default options => WrappedComponent => class BlockResizeableDecorator ext
 
     // Do the actual drag operation
     const doDrag = (dragEvent) => {
-      let width = (startWidth + dragEvent.clientX - startX);
-      let height = (startHeight + dragEvent.clientY - startY);
+      let width = (startWidth + dragEvent.clientX) - startX;
+      let height = (startHeight + dragEvent.clientY) - startY;
       const b = component.parentElement.parentElement;
       width = b.clientWidth < width ? b.clientWidth : width;
       height = b.clientHeight < height ? b.clientHeight : height;
 
-      const widthPerc = 100 / b.clientWidth * width;
-      const heightPerc = 100 / b.clientHeight * height;
+      const widthPerc = 100 / (b.clientWidth * width);
+      const heightPerc = 100 / (b.clientHeight * height);
 
       const newState = {};
       if ((isLeft || isRight) && horizontal === 'relative') {
@@ -197,9 +200,9 @@ export default options => WrappedComponent => class BlockResizeableDecorator ext
     }
 
     // Handle cursor
-    if (isRight && isBottom || isLeft && isTop) {
+    if ((isRight && isBottom) || (isLeft && isTop)) {
       styles.cursor = 'nwse-resize';
-    } else if (isRight && isTop || isBottom && isLeft) {
+    } else if ((isRight && isTop) || (isBottom && isLeft)) {
       styles.cursor = 'nesw-resize';
     } else if (isRight || isLeft) {
       styles.cursor = 'ew-resize';

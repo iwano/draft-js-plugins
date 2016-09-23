@@ -1,12 +1,12 @@
+import { SelectionState, EditorState } from 'draft-js';
 import setSelection from './modifiers/setSelection';
 import Decorator from './decorators/block-focus';
-import { SelectionState, EditorState } from 'draft-js';
 import styles from './style.css';
 
 const defaultTheme = { ...styles };
 const store = {
   types: {},
-  addType: type => {
+  addType: (type) => {
     store.types[type] = true;
   }
 };
@@ -68,7 +68,8 @@ const focusPlugin = (config = {}) => {
     onDownArrow: (event, { getEditorState, setEditorState, setReadOnly }) => {
       activeBlock = setSelection(store, getEditorState, setEditorState, activeBlock, 'down', event);
       setReadOnly(activeBlock && store.types[activeBlock.get('type')]);
-    }, onUpArrow: (event, { getEditorState, setEditorState, setReadOnly }) => {
+    },
+    onUpArrow: (event, { getEditorState, setEditorState, setReadOnly }) => {
       activeBlock = setSelection(store, getEditorState, setEditorState, activeBlock, 'up', event);
       setReadOnly(activeBlock && store.types[activeBlock.get('type')]);
     },

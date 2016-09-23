@@ -11,19 +11,19 @@ export default class Toolbar extends Component {
   };
 
   // PreventDefault helper to swallow clicks on toolbar to not loose focus
-  preventDefault = event => {
+  preventDefault = (event) => {
     event.preventDefault();
   };
 
   // Action toggle
-  toggleAction = action => {
+  toggleAction = (action) => {
     if (action.toggle) {
       action.toggle(action, !action.active);
     }
   };
 
   // Render single action buttons
-  renderAction = action => {
+  renderAction = (action) => {
     const { toolbarTheme } = this.context;
     const { theme } = this.props;
     const styles = toolbarTheme || theme;
@@ -37,7 +37,7 @@ export default class Toolbar extends Component {
     return (
       <div key={action.label} className={classNames.join(' ')}>
         <button onClick={toggle} data-tooltip={action.label}>
-          {action.icon ? <i className={`${action.icon} icon`}></i> : action.button}
+          {action.icon ? <i className={`${action.icon} icon`} /> : action.button}
         </button>
       </div>
     );

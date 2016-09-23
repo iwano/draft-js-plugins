@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 
 export default class MentionSuggestionsPortal extends Component {
 
-  componentWillMount() {
+  // When inputting Japanese characters (or any complex alphabet which requires
+  // hitting enter to commit the characters), that action was causing a race
+  // condition when we used componentWillMount. By using componentDidMount
+  // instead of componentWillMount, the component will unmount unregister and
+  // then properly mount and register after. Prior to this change,
+  // componentWillMount would not fire after componentWillUnmount even though it
+  // was still in the DOM, so it wasn't re-registering the offsetkey.
+  componentDidMount() {
     this.props.store.register(this.props.offsetKey);
     this.updatePortalClientRect(this.props);
 
@@ -22,14 +29,17 @@ export default class MentionSuggestionsPortal extends Component {
     this.props.store.updatePortalClientRect(
       props.offsetKey,
       () => (
-        this.refs.searchPortal.getBoundingClientRect()
+        this.searchPortal.getBoundingClientRect()
       ),
     );
   }
 
   render() {
     return (
-      <span className={this.key} ref="searchPortal">
+      <span
+        className={this.key}
+        ref={(element) => { this.searchPortal = element; }}
+      >
         {this.props.children}
       </span>
     );

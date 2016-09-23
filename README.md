@@ -8,7 +8,7 @@ High quality plugins with great UX on top of [DraftJS](https://github.com/facebo
 
 ## Important Note
 
-We currently prepare for a 2.0 beta. The `master` branch already contains these features. All the packages are already published with a beta tag. Install it via `$ npm install <plugin>@2.0.0-beta.2 --save`
+We currently prepare for a 2.0 beta. The `master` branch already contains these features. All the packages are already published with a beta tag. Install it via `$ npm install <plugin>@2.0.0-beta5 --save`
 
 ## Available Plugins (incl. Docs)
 
@@ -43,7 +43,7 @@ $ npm install draft-js-plugins-editor --save
 To try out the beta version of 2.0.0 run
 
 ```
-$ npm install draft-js-plugins-editor@2.0.0-beta.2 --save
+$ npm install draft-js-plugins-editor@2.0.0-beta5 --save
 ```
 
 Then import the editor somewhere in your code and you're ready to go!
@@ -58,14 +58,17 @@ import Editor from 'draft-js-plugins-editor';
 
 #### Editor
 
-An editor component accepting plugins.
+An editor component accepting plugins. [see source](https://github.com/draft-js-plugins/draft-js-plugins/blob/master/draft-js-plugins-editor/src/Editor/index.js#L16)
 
 | Props                                          | Description  | Required
 | -----------------------------------------------|:------------:| -------:|
 | editorState                                    | [see here](https://facebook.github.io/draft-js/docs/api-reference-editor-state.html#content)| * |
 | onChange                                       | [see here](https://facebook.github.io/draft-js/docs/api-reference-editor.html#onchange)| * |
 | plugins                                        | an array of plugins |  |
-| all other props accepted by the DraftJS Editor | [see here](https://facebook.github.io/draft-js/docs/api-reference-editor.html#props) |  |
+| decorators                                     | an array of custom decorators |  |
+| defaultKeyBindings                             | bool |  |
+| defaultBlockRenderMap                          | bool |  |
+| all other props accepted by the DraftJS Editor except decorator | [see here](https://facebook.github.io/draft-js/docs/api-reference-editor.html#props) |  |
 
 Usage:
 
@@ -102,7 +105,6 @@ export default class UnicornEditor extends Component {
         editorState={this.state.editorState}
         onChange={this.onChange}
         plugins={plugins}
-        ref="editor"
       />
     );
   }

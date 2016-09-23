@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-
+import { genKey } from 'draft-js';
 import Entry from './Entry';
 import addEmoji from '../modifiers/addEmoji';
 import getSearchText from '../utils/getSearchText';
 import decodeOffsetKey from '../utils/decodeOffsetKey';
-import { genKey } from 'draft-js';
-import emojiShortNames from '../utils/shortNames';
+
 
 export default class EmojiSuggestions extends Component {
 
@@ -20,7 +19,7 @@ export default class EmojiSuggestions extends Component {
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    if (this.refs.popover) {
+    if (this.popover) {
       // In case the list shrinks there should be still an option focused.
       // Note: this might run multiple times and deduct 1 until the condition is
       // not fullfilled anymore.
@@ -39,10 +38,10 @@ export default class EmojiSuggestions extends Component {
         props: this.props,
         state: this.state,
         filteredEmojis: this.filteredEmojis,
-        popover: this.refs.popover,
+        popover: this.popover,
       });
       Object.keys(newStyles).forEach((key) => {
-        this.refs.popover.style[key] = newStyles[key];
+        this.popover.style[key] = newStyles[key];
       });
     }
   };
@@ -93,13 +92,13 @@ export default class EmojiSuggestions extends Component {
     const selectionIsInsideWord = leaves
       .filter((leave) => leave !== undefined)
       .map(({ start, end }) => (
-        start === 0 && anchorOffset === 1 && anchorOffset <= end || // @ is the first character
-        anchorOffset > start + 1 && anchorOffset <= end // @ is in the text or at the end
+        (start === 0 && anchorOffset === 1 && anchorOffset <= end) || // @ is the first character
+        (anchorOffset > start + 1 && anchorOffset <= end) // @ is in the text or at the end
       ));
     if (selectionIsInsideWord.every((isInside) => isInside === false)) return removeList();
 
     this.activeOffsetKey = selectionIsInsideWord
-      .filter(value => value === true)
+      .filter((value) => value === true)
       .keySeq()
       .first();
 
@@ -120,8 +119,7 @@ export default class EmojiSuggestions extends Component {
 
     // makes sure the focused index is reseted every time a new selection opens
     // or the selection was moved to another emoji search
-    if (this.lastSelectionIsInsideWord === undefined ||
-        !selectionIsInsideWord.equals(this.lastSelectionIsInsideWord)) {
+    if (this.lastSelectionIsInsideWord === undefined || !selectionIsInsideWord.equals(this.lastSelectionIsInsideWord)) {
       this.setState({
         focusedOptionIndex: 0,
       });
@@ -164,7 +162,7 @@ export default class EmojiSuggestions extends Component {
     keyboardEvent.preventDefault();
 
     const activeOffsetKey = this.lastSelectionIsInsideWord
-      .filter(value => value === true)
+      .filter((value) => value === true)
       .keySeq()
       .first();
     this.props.store.escapeSearch(activeOffsetKey);
@@ -197,7 +195,7 @@ export default class EmojiSuggestions extends Component {
     const selection = this.props.store.getEditorState().getSelection();
     const { word } = getSearchText(this.props.store.getEditorState(), selection);
     const emojiValue = word.substring(1, word.length).toLowerCase();
-    const filteredValues = emojiShortNames.filter((emojiShortName) => (
+    const filteredValues = this.props.shortNames.filter((emojiShortName) => (
       !emojiValue || emojiShortName.indexOf(emojiValue) > -1
     ));
     const size = filteredValues.size < 9 ? filteredValues.size : 9;
@@ -260,14 +258,26 @@ export default class EmojiSuggestions extends Component {
     }
 
     this.filteredEmojis = this.getEmojisForFilter();
-    const { theme = {}, cacheBustParam, imagePath } = this.props;
+    const {
+      theme = {},
+      cacheBustParam,
+      imagePath,
+      ariaProps, // eslint-disable-line no-unused-vars
+      callbacks, // eslint-disable-line no-unused-vars
+      store, // eslint-disable-line no-unused-vars
+      positionSuggestions, // eslint-disable-line no-unused-vars
+      shortNames, // eslint-disable-line no-unused-vars
+      ...restProps,
+    } = this.props;
     return (
       <div
-        {...this.props}
+        {...restProps}
         className={theme.emojiSuggestions}
         role="listbox"
         id={`emojis-list-${this.key}`}
-        ref="popover"
+        ref={(element) => {
+          this.popover = element;
+        }}
       >
         {
           this.filteredEmojis.map((emoji, index) => (

@@ -1,14 +1,15 @@
+/* eslint-disable no-continue */
 import React, { Component } from 'react';
 import {
   Editor,
   EditorState,
+  DefaultDraftBlockRenderMap,
 } from 'draft-js';
-
+import { List, Map } from 'immutable';
 import createCompositeDecorator from './createCompositeDecorator';
 import moveSelectionToEnd from './moveSelectionToEnd';
 import proxies from './proxies';
 import * as defaultKeyBindingPlugin from './defaultKeyBindingPlugin';
-import { List } from 'immutable';
 
 /**
  * The main editor component
@@ -20,11 +21,13 @@ class PluginEditor extends Component {
     onChange: React.PropTypes.func.isRequired,
     plugins: React.PropTypes.array,
     defaultKeyBindings: React.PropTypes.bool,
+    defaultBlockRenderMap: React.PropTypes.bool,
     customStyleMap: React.PropTypes.object,
     decorators: React.PropTypes.array,
   };
 
   static defaultProps = {
+    defaultBlockRenderMap: true,
     defaultKeyBindings: true,
     customStyleMap: {},
     plugins: [],
@@ -43,7 +46,7 @@ class PluginEditor extends Component {
     // attach proxy methods like `focus` or `blur`
     for (const method of proxies) {
       this[method] = (...args) => (
-        this.refs.editor[method](...args)
+        this.editor[method](...args)
       );
     }
 
@@ -214,8 +217,8 @@ class PluginEditor extends Component {
 
   resolveCustomStyleMap = () => (
     this.props.plugins
-     .filter(plug => plug.customStyleMap !== undefined)
-     .map(plug => plug.customStyleMap)
+     .filter((plug) => plug.customStyleMap !== undefined)
+     .map((plug) => plug.customStyleMap)
      .concat([this.props.customStyleMap])
      .reduce((styles, style) => (
        {
@@ -224,6 +227,19 @@ class PluginEditor extends Component {
        }
      ), {})
   );
+
+  resolveblockRenderMap = () => {
+    let blockRenderMap = this.props.plugins
+      .filter((plug) => plug.blockRenderMap !== undefined)
+      .reduce((maps, plug) => maps.merge(plug.blockRenderMap), Map({}));
+    if (this.props.defaultBlockRenderMap) {
+      blockRenderMap = DefaultDraftBlockRenderMap.merge(blockRenderMap);
+    }
+    if (this.props.blockRenderMap) {
+      blockRenderMap = blockRenderMap.merge(this.props.blockRenderMap);
+    }
+    return blockRenderMap;
+  }
 
   resolveAccessibilityProps = () => {
     let accessibilityProps = {};
@@ -259,6 +275,7 @@ class PluginEditor extends Component {
     const pluginHooks = this.createPluginHooks();
     const customStyleMap = this.resolveCustomStyleMap();
     const accessibilityProps = this.resolveAccessibilityProps();
+    const blockRenderMap = this.resolveblockRenderMap();
     return (
       <Editor
         {...this.props}
@@ -266,9 +283,10 @@ class PluginEditor extends Component {
         {...pluginHooks}
         readOnly={this.props.readOnly || this.state.readOnly}
         customStyleMap={customStyleMap}
+        blockRenderMap={blockRenderMap}
         onChange={this.onChange}
         editorState={this.props.editorState}
-        ref="editor"
+        ref={(element) => { this.editor = element; }}
       />
     );
   }
